@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -26,8 +25,9 @@ public class ProductController {
     }
 
     @GetMapping("/api/products")
-        public ResponseEntity<?> getAllProducts()  {
+        public ResponseEntity<?> getAllProducts() throws InterruptedException {
         log.info("Get All Products");
+        Thread.sleep(2000);
         return new ResponseEntity<>( productsService.listProducts(), HttpStatus.OK);
     }
 
@@ -39,14 +39,14 @@ public class ProductController {
 
 
     @PostMapping("/api/products")
-    public ResponseEntity<?> saveProduct(@Valid @RequestBody ProductDto productDto) throws BusinessException {
+    public ResponseEntity<?> saveProduct(@Valid @RequestBody ProductDto productDto) throws BusinessException, InterruptedException {
         log.info("Save product ");
+        Thread.sleep(2000);
         return new ResponseEntity<>( productsService.addProduct(productDto), HttpStatus.OK);
     }
 
 
 
-    @PreAuthorize("@permissionEvaluator.isBotMaintainer(#botId)")
     @PutMapping("/api/products/{productId}")
     public ResponseEntity<?> updateProduct(@PathVariable("productId") String productId,
                                                     @Valid @RequestBody ProductDto productDto)
@@ -57,9 +57,8 @@ public class ProductController {
 
 
 
-    @PreAuthorize("@permissionEvaluator.isBotMaintainer(#botId)")
     @DeleteMapping("/api/products/{productId}")
-    public ResponseEntity<?> deleteConversation(@PathVariable("productId") String productId)
+    public ResponseEntity<?> deleteProduct(@PathVariable("productId") String productId)
             throws ProductNotFoundException {
         log.info("Delete product with id {} ", productId);
         productsService.deleteProduct(productId);
